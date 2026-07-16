@@ -1,0 +1,11 @@
+node_modules/
+dist/
+tmp/
+.env
+.DS_Store
+
+# Private originals downloaded from the selected Google Photos album.
+src/assets/*-source.jpg
+
+# Local visual QA captures (kept out of the published site).
+design-*.png
