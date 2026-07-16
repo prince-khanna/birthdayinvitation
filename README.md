@@ -26,4 +26,4 @@ Configure the function secrets `INVITATION_TOKEN` and `ALLOWED_ORIGIN`, deploy i
 
 ## GitHub Pages
 
-The included workflow builds and deploys `dist` whenever `main` is pushed. Enable GitHub Pages with GitHub Actions as its source.
+The included workflow builds and deploys `dist` whenever `main` is pushed and attempts to enable Pages automatically. GitHub Pages must be supported for the repository’s visibility and account plan; otherwise make the repository public or upgrade the plan, then rerun the workflow.
