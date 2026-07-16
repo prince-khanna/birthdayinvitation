@@ -157,6 +157,8 @@ export function App() {
   const [cameraOpen, setCameraOpen] = useState(false);
   const [photoBlob, setPhotoBlob] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
+  const [cameraBusy, setCameraBusy] = useState(false);
+  const [cameraNotice, setCameraNotice] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -177,27 +179,46 @@ export function App() {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     setCameraOpen(false);
+    setCameraBusy(false);
   }, []);
 
   useEffect(() => closeCamera, [closeCamera]);
 
+  useEffect(() => {
+    if (!cameraOpen || !streamRef.current || !videoRef.current) return undefined;
+    const video = videoRef.current;
+    video.srcObject = streamRef.current;
+    void video.play().catch(() => {
+      setCameraNotice("Your browser could not start the camera preview. Choose a photo from your device instead.");
+    });
+    return () => {
+      video.srcObject = null;
+    };
+  }, [cameraOpen]);
+
   const startCamera = async () => {
     setError("");
+    setCameraNotice("");
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraNotice("Camera access is not available in this browser. Choose a photo from your device instead.");
+      return;
+    }
+
+    setCameraBusy(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 900 } },
+        video: { facingMode: { ideal: "user" }, width: { ideal: 900 } },
         audio: false,
       });
       streamRef.current = stream;
       setCameraOpen(true);
-      window.setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play();
-        }
-      }, 0);
-    } catch {
-      fileRef.current?.click();
+    } catch (cameraError) {
+      const notice = cameraError?.name === "NotAllowedError"
+        ? "Camera permission was blocked. Choose a photo from your device instead."
+        : "We couldn’t open the camera here. Choose a photo from your device instead.";
+      setCameraNotice(notice);
+    } finally {
+      setCameraBusy(false);
     }
   };
 
@@ -206,12 +227,16 @@ export function App() {
     if (photoPreview) URL.revokeObjectURL(photoPreview);
     setPhotoBlob(blob);
     setPhotoPreview(URL.createObjectURL(blob));
+    setCameraNotice("");
     closeCamera();
   };
 
   const capturePhoto = () => {
     const video = videoRef.current;
-    if (!video?.videoWidth) return;
+    if (!video?.videoWidth) {
+      setCameraNotice("The camera is still warming up. Please try again in a moment.");
+      return;
+    }
     const canvas = document.createElement("canvas");
     const scale = Math.min(1, 1200 / video.videoWidth);
     canvas.width = Math.round(video.videoWidth * scale);
@@ -356,12 +381,22 @@ export function App() {
                   {photoPreview ? (
                     <div className="selfie-preview">
                       <img src={photoPreview} alt="Your RSVP selfie preview" />
-                      <button type="button" onClick={startCamera}><Camera /> Retake</button>
+                      <div className="selfie-actions">
+                        <button type="button" onClick={startCamera}><Camera /> Retake</button>
+                        <label htmlFor="rsvp-photo">Choose a different photo</label>
+                      </div>
                     </div>
                   ) : (
-                    <button className="camera-button" type="button" onClick={startCamera}><Camera weight="duotone" /><span>Open camera</span></button>
+                    <div className="camera-actions">
+                      <button className="camera-button" type="button" onClick={startCamera} disabled={cameraBusy}>
+                        <Camera weight="duotone" />
+                        <span>{cameraBusy ? "Opening camera…" : "Open camera"}</span>
+                      </button>
+                      <label className="camera-file-button" htmlFor="rsvp-photo">Choose a photo instead</label>
+                    </div>
                   )}
-                  <input ref={fileRef} className="visually-hidden" type="file" accept="image/*" capture="user" onChange={(event) => acceptPhoto(event.target.files?.[0])} />
+                  {cameraNotice && <p className="camera-notice" role="alert">{cameraNotice}</p>}
+                  <input id="rsvp-photo" ref={fileRef} className="visually-hidden" type="file" accept="image/*" capture="user" onChange={(event) => acceptPhoto(event.target.files?.[0])} />
                 </div>
               </div>
 

@@ -109,11 +109,17 @@ button { color: inherit; }
 .rsvp-step input:focus { border-color: var(--berry); box-shadow: 0 0 0 3px rgba(216, 57, 89, .12); }
 .privacy-note { color: #7a685c; font-size: .78rem; line-height: 1.45; text-align: center; }
 .camera-button { display: grid; justify-items: center; gap: 8px; width: 100%; min-height: 150px; padding: 20px; border: 2px dashed #dc989d; border-radius: 42% 58% 46% 54% / 54% 43% 57% 46%; color: var(--berry-dark); background: #fff1e3; cursor: pointer; }
+.camera-button:disabled { opacity: .65; cursor: wait; }
 .camera-button svg { width: 48px; height: 48px; }
 .camera-button span { font-weight: 800; }
+.camera-actions { display: grid; gap: 12px; }
+.camera-file-button { display: inline-flex; justify-content: center; padding: 10px 14px; border: 1px solid #ddb5aa; border-radius: 999px; color: var(--berry-dark); background: #fffaf2; font-size: .82rem; font-weight: 800; cursor: pointer; }
+.camera-file-button:hover, .selfie-actions label:hover { background: #fff1e3; }
+.camera-notice { margin: 12px 0 0; color: #8e1e30; font-size: .8rem; font-weight: 700; line-height: 1.45; text-align: center; }
 .selfie-preview { text-align: center; }
 .selfie-preview img { width: 150px; aspect-ratio: 1; object-fit: cover; border: 7px solid #f4d6c9; border-radius: 48% 52% 45% 55% / 52% 45% 55% 48%; }
-.selfie-preview button { display: flex; align-items: center; gap: 6px; margin: 12px auto 0; border: 0; color: var(--berry-dark); background: transparent; font-weight: 800; cursor: pointer; }
+.selfie-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px; margin-top: 12px; }
+.selfie-actions button, .selfie-actions label { display: inline-flex; align-items: center; gap: 6px; padding: 5px 0; border: 0; color: var(--berry-dark); background: transparent; font-size: .82rem; font-weight: 800; cursor: pointer; }
 .rsvp-step--submit { display: grid; align-items: center; text-align: center; }
 .rsvp-step--submit .primary-button { width: 100%; }
 .form-error { grid-column: 1 / -1; margin: 0; color: #8e1e30; font-weight: 700; text-align: center; }
