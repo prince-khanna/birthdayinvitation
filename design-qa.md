@@ -23,7 +23,7 @@ The approved concept and the stitched implementation capture were normalized to 
 - Music play/pause and mute controls remain fixed while scrolling.
 - Carousel next control changes the active photograph across all 16 untouched album images.
 - RSVP name accepts input; submit remains disabled until a required photo is present.
-- Camera permission was not granted during QA; the permission/fallback path is implemented but requires a real device permission check.
+- Camera permission was not granted during QA; the camera now reports a clear permission/unavailability message and exposes a direct device-photo fallback that does not depend on an asynchronous picker launch.
 - Google Maps link resolves to the supplied destination URL.
 - Initial AudioContext resume blocked the opening transition during the first pass. Playback was changed to resume non-blockingly; retest confirmed the invitation opens and the player reports `Playing as you scroll`.
 
