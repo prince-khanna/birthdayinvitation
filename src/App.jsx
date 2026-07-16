@@ -15,16 +15,43 @@ import {
 } from "@phosphor-icons/react";
 
 import heroPhoto from "./assets/anvika-hero-berry.jpg";
-import flyingPhoto from "./assets/anvika-flying-berry.jpg";
-import fairyPhoto from "./assets/anvika-fairy-berry.jpg";
+import album01Photo from "./assets/anvika-album-01.jpg";
+import album02Photo from "./assets/anvika-album-02.jpg";
+import album03Photo from "./assets/anvika-album-03.jpg";
+import album04Photo from "./assets/anvika-album-04.jpg";
+import album05Photo from "./assets/anvika-album-05.jpg";
+import album06Photo from "./assets/anvika-album-06.jpg";
+import album07Photo from "./assets/anvika-album-07.jpg";
+import album08Photo from "./assets/anvika-album-08.jpg";
+import album09Photo from "./assets/anvika-album-09.jpg";
+import album10Photo from "./assets/anvika-album-10.jpg";
+import album11Photo from "./assets/anvika-album-11.jpg";
+import album12Photo from "./assets/anvika-album-12.jpg";
+import album13Photo from "./assets/anvika-album-13.jpg";
+import album14Photo from "./assets/anvika-album-14.jpg";
+import album15Photo from "./assets/anvika-album-15.jpg";
+import album16Photo from "./assets/anvika-album-16.jpg";
 import berryEnvelope from "./assets/berry-envelope.webp";
 import berryMap from "./assets/berry-map.jpg";
 import berrySprig from "./assets/berry-sprig.webp";
 
 const photos = [
-  { src: heroPhoto, alt: "Anvika surrounded by a watercolor berry garden" },
-  { src: flyingPhoto, alt: "Anvika playing in a magical berry storybook scene" },
-  { src: fairyPhoto, alt: "Anvika in a playful watercolor berry garden" },
+  { src: album01Photo, alt: "Anvika — 9 August 2025" },
+  { src: album02Photo, alt: "Anvika — 29 August 2025" },
+  { src: album03Photo, alt: "Anvika — 12 October 2025" },
+  { src: album04Photo, alt: "Anvika — 8 November 2025" },
+  { src: album05Photo, alt: "Anvika — 6 December 2025" },
+  { src: album06Photo, alt: "Anvika — 7 January 2026" },
+  { src: album07Photo, alt: "Anvika — 15 January 2026" },
+  { src: album08Photo, alt: "Anvika — 17 January 2026" },
+  { src: album09Photo, alt: "Anvika — 24 January 2026" },
+  { src: album10Photo, alt: "Anvika — 31 January 2026" },
+  { src: album11Photo, alt: "Anvika — 12 February 2026" },
+  { src: album12Photo, alt: "Anvika — 17 March 2026" },
+  { src: album13Photo, alt: "Anvika — 25 April 2026" },
+  { src: album14Photo, alt: "Anvika — 10 May 2026" },
+  { src: album15Photo, alt: "Anvika — 30 May 2026" },
+  { src: album16Photo, alt: "Anvika — 5 July 2026" },
 ];
 
 const melody = [

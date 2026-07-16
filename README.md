@@ -1,6 +1,6 @@
 # Anvika’s Berry First Birthday
 
-A playful, mobile-friendly first-birthday invitation with a berry-opening reveal, an original background melody, Anvika’s themed photo carousel, event details, and camera-based RSVP.
+A playful, mobile-friendly first-birthday invitation with a berry-opening reveal, an original background melody, all 16 untouched photographs from Anvika’s album, event details, and camera-based RSVP.
 
 ## Local development
 

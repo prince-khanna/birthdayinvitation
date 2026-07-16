@@ -7,19 +7,21 @@
 
 ## Full-view comparison evidence
 
-The approved concept and the stitched implementation capture were normalized to the same display width and inspected together in `design-comparison.png`. The implementation preserves the concept's cream paper, watercolor berry border, strawberry opening interaction, berry-red and leaf-green hierarchy, portrait-led hero, photo memories, illustrated map, three-step RSVP, and botanical footer. The implementation is intentionally taller on mobile so the real controls and photographs remain legible and touch-friendly.
+The approved concept and the stitched implementation capture were normalized to the same display width and inspected together in `design-comparison.png`. The implementation preserves the concept's cream paper, watercolor berry border, strawberry opening interaction, berry-red and leaf-green hierarchy, portrait-led hero, photo memories, illustrated map, three-step RSVP, and botanical footer. The implementation is intentionally taller on mobile so all 16 untouched album photographs and the real controls remain legible and touch-friendly.
 
 ## Focused-region comparison evidence
 
 - Hero/opening: inspected at 390 x 844 after opening. The real album portrait, strawberry invitation, typography, border density, and music control match the approved direction without clipping.
+- Memories carousel: inspected with the first portrait and the landscape frame. Both original frames remain complete inside the carousel; the face-safe `contain` treatment adds letterboxing instead of cropping.
 - Event details: inspected in `/Users/prince/git/birthdayinvitation/design-mobile-event.png`. Time, venue, address, illustrated map, and enabled Maps link fit without horizontal overflow.
 - RSVP: inspected in `/Users/prince/git/birthdayinvitation/design-mobile-rsvp.png`. All three steps stack cleanly; the camera action is prominent; no attendee-count or sharing control is present; the fixed music player remains usable.
 
 ## Interaction and regression checks
 
 - Opening the berry starts the generated background melody and reveals the invitation.
+- Before opening, the page is scroll-locked at the berry cover; scrolling begins only after the berry is pressed.
 - Music play/pause and mute controls remain fixed while scrolling.
-- Carousel next control changes the active Anvika photograph.
+- Carousel next control changes the active photograph across all 16 untouched album images.
 - RSVP name accepts input; submit remains disabled until a required photo is present.
 - Camera permission was not granted during QA; the permission/fallback path is implemented but requires a real device permission check.
 - Google Maps link resolves to the supplied destination URL.

@@ -25,6 +25,7 @@ button, input { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; }
 .site { min-height: 100vh; overflow-x: hidden; }
+.site:not(.is-open) { height: 100svh; overflow: hidden; }
 
 .berry-door {
   min-height: 100svh;
@@ -80,8 +81,8 @@ button { color: inherit; }
 .carousel { display: grid; grid-template-columns: 52px minmax(0, 720px) 52px; justify-content: center; align-items: center; gap: 18px; }
 .carousel > button { display: grid; place-items: center; width: 52px; aspect-ratio: 1; border: 1px solid #e9b5b6; border-radius: 50%; color: var(--berry); background: #fff; cursor: pointer; box-shadow: 0 6px 14px rgba(83, 51, 43, .12); }
 .carousel figure { margin: 0; overflow: hidden; padding: 12px; border-radius: 34px; background: #f3d9d5; box-shadow: 0 20px 50px rgba(83, 51, 43, .14); }
-.carousel img { display: block; width: 100%; height: min(64vw, 600px); object-fit: cover; border-radius: 24px; }
-.carousel__dots { display: flex; justify-content: center; gap: 10px; margin-top: 24px; }
+.carousel img { display: block; width: 100%; height: min(64vw, 600px); object-fit: contain; border-radius: 24px; background: #fff9ef; }
+.carousel__dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 420px; margin: 24px auto 0; }
 .carousel__dots button { width: 11px; height: 11px; padding: 0; border: 1px solid #dca0a2; border-radius: 50%; background: transparent; cursor: pointer; }
 .carousel__dots .active { background: var(--berry); }
 
