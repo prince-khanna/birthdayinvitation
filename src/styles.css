@@ -28,6 +28,8 @@ button { color: inherit; }
 .site:not(.is-open) { height: 100svh; overflow: hidden; }
 
 .berry-door {
+  width: min(100%, 1180px);
+  margin-inline: auto;
   min-height: 100svh;
   display: grid;
   place-items: center;
