@@ -59,6 +59,9 @@ const melody = [
   659.25, 783.99, 987.77, 783.99, 587.33, 698.46, 783.99, 523.25,
 ];
 
+const MUSIC_VOLUME = 0.065;
+const MUSIC_SCROLL_VOLUME = 0.085;
+
 function loadInvitationToken() {
   const url = new URL(window.location.href);
   const linkToken =
@@ -97,22 +100,31 @@ function useBerryMelody() {
     setPlaying(false);
   }, []);
 
-  const play = useCallback(() => {
+  const play = useCallback(async () => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
 
     if (!audioRef.current) {
       const context = new AudioContext();
       const gain = context.createGain();
-      gain.gain.value = 0.035;
+      gain.gain.value = MUSIC_VOLUME;
       gain.connect(context.destination);
       audioRef.current = { context, gain };
     }
 
     const { context, gain } = audioRef.current;
-    setPlaying(true);
-    if (context.state === "suspended") {
-      void context.resume().catch(() => setPlaying(false));
+    if (context.state !== "running") {
+      try {
+        await context.resume();
+      } catch {
+        setPlaying(false);
+        return;
+      }
+    }
+
+    if (context.state !== "running") {
+      setPlaying(false);
+      return;
     }
 
     const playNote = () => {
@@ -134,6 +146,7 @@ function useBerryMelody() {
     playNote();
     window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(playNote, 760);
+    setPlaying(true);
   }, []);
 
   useEffect(() => {
@@ -141,7 +154,9 @@ function useBerryMelody() {
       if (!audioRef.current) return;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const progress = max > 0 ? window.scrollY / max : 0;
-      const volume = mutedRef.current ? 0 : 0.025 + progress * 0.02;
+      const volume = mutedRef.current
+        ? 0
+        : MUSIC_VOLUME + progress * (MUSIC_SCROLL_VOLUME - MUSIC_VOLUME);
       audioRef.current.gain.gain.setTargetAtTime(volume, audioRef.current.context.currentTime, 0.25);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -155,7 +170,7 @@ function useBerryMelody() {
       const next = !current;
       mutedRef.current = next;
       if (audioRef.current) {
-        audioRef.current.gain.gain.setTargetAtTime(next ? 0 : 0.035, audioRef.current.context.currentTime, 0.08);
+        audioRef.current.gain.gain.setTargetAtTime(next ? 0 : MUSIC_VOLUME, audioRef.current.context.currentTime, 0.08);
       }
       return next;
     });
@@ -194,7 +209,7 @@ export function App() {
 
   const openInvitation = () => {
     setOpened(true);
-    play();
+    void play();
     window.setTimeout(() => {
       document.querySelector("#invitation")?.scrollIntoView({ behavior: "smooth" });
     }, 430);
