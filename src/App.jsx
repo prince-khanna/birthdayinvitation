@@ -15,43 +15,33 @@ import {
 } from "@phosphor-icons/react";
 
 import heroPhoto from "./assets/anvika-hero-berry.jpg";
-import album01Photo from "./assets/anvika-album-01.jpg";
-import album02Photo from "./assets/anvika-album-02.jpg";
-import album03Photo from "./assets/anvika-album-03.jpg";
-import album04Photo from "./assets/anvika-album-04.jpg";
-import album05Photo from "./assets/anvika-album-05.jpg";
-import album06Photo from "./assets/anvika-album-06.jpg";
-import album07Photo from "./assets/anvika-album-07.jpg";
-import album08Photo from "./assets/anvika-album-08.jpg";
-import album09Photo from "./assets/anvika-album-09.jpg";
-import album10Photo from "./assets/anvika-album-10.jpg";
-import album11Photo from "./assets/anvika-album-11.jpg";
-import album12Photo from "./assets/anvika-album-12.jpg";
-import album13Photo from "./assets/anvika-album-13.jpg";
-import album14Photo from "./assets/anvika-album-14.jpg";
-import album15Photo from "./assets/anvika-album-15.jpg";
-import album16Photo from "./assets/anvika-album-16.jpg";
+import memory00Photo from "./assets/anvika-memory-00.webp";
+import memory01Photo from "./assets/anvika-memory-01.webp";
+import memory02Photo from "./assets/anvika-memory-02.webp";
+import memory03Photo from "./assets/anvika-memory-03.webp";
+import memory04Photo from "./assets/anvika-memory-month-04.webp";
+import memory05Photo from "./assets/anvika-memory-04.webp";
+import memory06Photo from "./assets/anvika-memory-month-06.webp";
+import memory07Photo from "./assets/anvika-memory-05.webp";
+import memory08Photo from "./assets/anvika-memory-06.webp";
+import memory09Photo from "./assets/anvika-memory-07.webp";
+import memory10Photo from "./assets/anvika-memory-08.webp";
 import berryEnvelope from "./assets/berry-envelope.webp";
 import berryMap from "./assets/berry-map.jpg";
 import berrySprig from "./assets/berry-sprig.webp";
 
 const photos = [
-  { src: album01Photo, alt: "Anvika — 9 August 2025" },
-  { src: album02Photo, alt: "Anvika — 29 August 2025" },
-  { src: album03Photo, alt: "Anvika — 12 October 2025" },
-  { src: album04Photo, alt: "Anvika — 8 November 2025" },
-  { src: album05Photo, alt: "Anvika — 6 December 2025" },
-  { src: album06Photo, alt: "Anvika — 7 January 2026" },
-  { src: album07Photo, alt: "Anvika — 15 January 2026" },
-  { src: album08Photo, alt: "Anvika — 17 January 2026" },
-  { src: album09Photo, alt: "Anvika — 24 January 2026" },
-  { src: album10Photo, alt: "Anvika — 31 January 2026" },
-  { src: album11Photo, alt: "Anvika — 12 February 2026" },
-  { src: album12Photo, alt: "Anvika — 17 March 2026" },
-  { src: album13Photo, alt: "Anvika — 25 April 2026" },
-  { src: album14Photo, alt: "Anvika — 10 May 2026" },
-  { src: album15Photo, alt: "Anvika — 30 May 2026" },
-  { src: album16Photo, alt: "Anvika — 5 July 2026" },
+  { src: memory00Photo, alt: "Anvika’s first memory" },
+  { src: memory01Photo, alt: "Anvika at one month old" },
+  { src: memory02Photo, alt: "Anvika at two months old" },
+  { src: memory03Photo, alt: "Anvika at three months old" },
+  { src: memory04Photo, alt: "Anvika at four months old" },
+  { src: memory05Photo, alt: "Anvika at five months old" },
+  { src: memory06Photo, alt: "Anvika at six months old" },
+  { src: memory07Photo, alt: "Anvika at seven months old" },
+  { src: memory08Photo, alt: "Anvika at eight months old" },
+  { src: memory09Photo, alt: "Anvika at nine months old" },
+  { src: memory10Photo, alt: "Anvika at ten months old" },
 ];
 
 const melody = [
@@ -204,6 +194,7 @@ export function App() {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const fileRef = useRef(null);
+  const preloadedPhotosRef = useRef([]);
   const [invitationToken] = useState(loadInvitationToken);
   const { playing, muted, play, stop, toggleMute } = useBerryMelody();
 
@@ -223,6 +214,18 @@ export function App() {
   }, []);
 
   useEffect(() => closeCamera, [closeCamera]);
+
+  useEffect(() => {
+    if (!opened || preloadedPhotosRef.current.length) return;
+
+    preloadedPhotosRef.current = photos.map(({ src }) => {
+      const image = new Image();
+      image.decoding = "async";
+      image.src = src;
+      void image.decode?.().catch(() => {});
+      return image;
+    });
+  }, [opened]);
 
   useEffect(() => {
     if (!cameraOpen || !streamRef.current || !videoRef.current) return undefined;
@@ -370,7 +373,7 @@ export function App() {
           <SectionHeading eyebrow="A year of tiny moments">Sweet little memories</SectionHeading>
           <div className="carousel">
             <button type="button" onClick={() => setSlide((slide + photos.length - 1) % photos.length)} aria-label="Previous photograph"><ArrowLeft /></button>
-            <figure><img src={photos[slide].src} alt={photos[slide].alt} /></figure>
+            <figure><img src={photos[slide].src} alt={photos[slide].alt} decoding="async" /></figure>
             <button type="button" onClick={() => setSlide((slide + 1) % photos.length)} aria-label="Next photograph"><ArrowRight /></button>
           </div>
           <div className="carousel__dots" aria-label={`Photograph ${slide + 1} of ${photos.length}`}>
