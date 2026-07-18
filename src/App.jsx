@@ -14,7 +14,7 @@ import {
   X,
 } from "@phosphor-icons/react";
 
-import heroPhoto from "./assets/anvika-hero-berry.jpg";
+import heroPhoto from "./assets/anvika-hero-berry-edited.webp";
 import memory00Photo from "./assets/anvika-memory-00.webp";
 import memory01Photo from "./assets/anvika-memory-01.webp";
 import memory02Photo from "./assets/anvika-memory-02.webp";
@@ -364,7 +364,7 @@ export function App() {
             <a className="primary-button" href="#rsvp">RSVP for Anvika</a>
           </div>
           <figure className="hero__portrait">
-            <img src={heroPhoto} alt="Anvika in a watercolor berry garden" />
+            <img src={heroPhoto} alt="Anvika smiling in pink sunglasses" />
             <figcaption>One whole year of sweetness</figcaption>
           </figure>
         </section>
