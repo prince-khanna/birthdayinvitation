@@ -22,13 +22,15 @@ The `supabase/` directory contains:
 - a migration for a private `rsvps` table and private `rsvp-selfies` bucket;
 - an Edge Function that validates a private invitation token by SHA-256 digest, stores the selfie, and inserts the RSVP.
 
-The production function allows the GitHub Pages origin and contains only the one-way digest of the invitation token. The token itself must never be committed. To rotate it, set the function secret `INVITATION_TOKEN_SHA256` to the SHA-256 digest of a new random token. Add the deployed function URL as the GitHub repository secret `VITE_RSVP_ENDPOINT`.
+The production function allows the GitHub Pages origin and contains only one-way digests of accepted invitation codes. The codes themselves must never be committed. Add the deployed function URL as the GitHub repository secret `VITE_RSVP_ENDPOINT`.
 
-Guests must use the private link format:
+Guests should use the compact private link format:
 
 ```text
-https://prince-khanna.github.io/birthdayinvitation/?invite=PRIVATE_TOKEN
+https://prince-khanna.github.io/birthdayinvitation/?i=SHORT_CODE
 ```
+
+The legacy `?invite=...` format remains supported so previously shared links continue to work.
 
 ## GitHub Pages
 

@@ -61,7 +61,8 @@ const melody = [
 
 function loadInvitationToken() {
   const url = new URL(window.location.href);
-  const linkToken = url.searchParams.get("invite");
+  const linkToken =
+    url.searchParams.get("i") ?? url.searchParams.get("invite");
 
   if (linkToken) {
     try {
@@ -69,6 +70,7 @@ function loadInvitationToken() {
     } catch {
       // The in-memory copy below still keeps this visit working.
     }
+    url.searchParams.delete("i");
     url.searchParams.delete("invite");
     window.history.replaceState(null, "", url);
     return linkToken;

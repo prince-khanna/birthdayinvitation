@@ -6,9 +6,13 @@ const allowedOrigins = new Set(
     (origin): origin is string => Boolean(origin),
   ),
 );
-const expectedTokenHash =
-  Deno.env.get("INVITATION_TOKEN_SHA256") ??
-  "f4678f6876d9f5568f23bc31795116bccfdaf922ab7c670bac13f13010bbe085";
+const expectedTokenHashes = new Set(
+  [
+    Deno.env.get("INVITATION_TOKEN_SHA256"),
+    "f4678f6876d9f5568f23bc31795116bccfdaf922ab7c670bac13f13010bbe085",
+    "58fd208614a6e9ad4a44841dc233b977a461efb5bac2f781a0b581d6297199c5",
+  ].filter((hash): hash is string => Boolean(hash)),
+);
 const allowedPhotoTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function corsHeaders(origin: string | null) {
@@ -72,7 +76,10 @@ Deno.serve(async (request) => {
     const photo = form.get("photo");
     const suppliedTokenHash = await sha256(invitationToken);
 
-    if (!timingSafeEqual(suppliedTokenHash, expectedTokenHash)) {
+    const validInvitation = Array.from(expectedTokenHashes).some((expectedHash) =>
+      timingSafeEqual(suppliedTokenHash, expectedHash)
+    );
+    if (!validInvitation) {
       return Response.json({ error: "Invalid invitation" }, { status: 401, headers });
     }
 
