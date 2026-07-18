@@ -278,7 +278,13 @@ export function App() {
   };
 
   return (
-    <main className={opened ? "site is-open" : "site"}>
+    <main
+      className={opened ? "site is-open" : "site"}
+      onContextMenu={(event) => event.preventDefault()}
+      onDragStart={(event) => {
+        if (event.target instanceof HTMLImageElement) event.preventDefault();
+      }}
+    >
       <section className="berry-door" aria-label="Open Anvika’s birthday invitation">
         <div className="berry-door__content">
           <p className="eyebrow">A tiny invitation has ripened for you</p>

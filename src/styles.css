@@ -25,6 +25,11 @@ button, input { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; }
 .site { min-height: 100vh; overflow-x: hidden; }
+.site img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
 .site:not(.is-open) { height: 100svh; overflow: hidden; }
 
 .berry-door {
