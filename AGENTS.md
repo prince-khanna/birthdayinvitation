@@ -17,3 +17,4 @@ When implementing from a selected generated mock, treat that image as the source
 - GitHub Pages is the static host; production RSVP delivery is expected to use a protected backend endpoint such as a Supabase Edge Function.
 - Photo memories keep the original first photograph, followed chronologically by the supplied monthly milestone photographs for months 1–10. Use optimized, preloaded variants for fast mobile switching.
 - Use the supplied portrait of Anvika wearing pink sunglasses in her stroller as the main hero photograph, edited into the warm watercolor berry-storybook setting.
+- Maintain a Sites deployment alongside GitHub Pages and use its clean production URL as an alternate invitation share link.
