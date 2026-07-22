@@ -54,30 +54,6 @@ const melody = [
 const MUSIC_VOLUME = 0.065;
 const MUSIC_SCROLL_VOLUME = 0.085;
 
-function loadInvitationToken() {
-  const url = new URL(window.location.href);
-  const linkToken =
-    url.searchParams.get("i") ?? url.searchParams.get("invite");
-
-  if (linkToken) {
-    try {
-      window.sessionStorage.setItem("anvika-invitation-token", linkToken);
-    } catch {
-      // The in-memory copy below still keeps this visit working.
-    }
-    url.searchParams.delete("i");
-    url.searchParams.delete("invite");
-    window.history.replaceState(null, "", url);
-    return linkToken;
-  }
-
-  try {
-    return window.sessionStorage.getItem("anvika-invitation-token") ?? "";
-  } catch {
-    return "";
-  }
-}
-
 function useBerryMelody() {
   const audioRef = useRef(null);
   const timerRef = useRef(null);
@@ -197,7 +173,6 @@ export function App() {
   const streamRef = useRef(null);
   const fileRef = useRef(null);
   const preloadedPhotosRef = useRef([]);
-  const [invitationToken] = useState(loadInvitationToken);
   const { playing, muted, play, stop, toggleMute } = useBerryMelody();
 
   const openInvitation = () => {
@@ -302,13 +277,9 @@ export function App() {
     const endpoint = import.meta.env.VITE_RSVP_ENDPOINT;
     try {
       if (endpoint) {
-        if (!invitationToken) {
-          throw new Error("Invitation token is missing");
-        }
         const payload = new FormData();
         payload.append("guest_name", name.trim());
         payload.append("photo", photoBlob, "berry-selfie.jpg");
-        payload.append("invitation_token", invitationToken);
         const response = await fetch(endpoint, { method: "POST", body: payload });
         if (!response.ok) throw new Error("RSVP could not be sent");
       } else {

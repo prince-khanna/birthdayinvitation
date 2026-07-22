@@ -15,22 +15,20 @@ The invitation is set for Sunday, 9 August 2026 at 11:00 AM at Hofreiter BeerenC
 
 ## RSVP delivery
 
-The front end reads `VITE_RSVP_ENDPOINT` at build time and submits a guest name, invitation token, and camera photo as multipart form data. Without that variable, it runs in local preview mode and does not deliver responses remotely. The invitation token is accepted from the private guest URL, kept in session storage, and removed from the address bar after the page loads.
+The front end reads `VITE_RSVP_ENDPOINT` at build time and submits a guest name and camera photo as multipart form data. Without that variable, it runs in local preview mode and does not deliver responses remotely.
 
 The `supabase/` directory contains:
 
 - a migration for a private `rsvps` table and private `rsvp-selfies` bucket;
-- an Edge Function that validates a private invitation token by SHA-256 digest, stores the selfie, and inserts the RSVP.
+- an Edge Function that accepts requests from the approved invitation origin, stores the selfie, and inserts the RSVP.
 
-The production function allows the GitHub Pages origin and contains only one-way digests of accepted invitation codes. The codes themselves must never be committed. Add the deployed function URL as the GitHub repository secret `VITE_RSVP_ENDPOINT`.
+The production function allows the approved invitation origins. Add the deployed function URL as the GitHub repository secret `VITE_RSVP_ENDPOINT`.
 
-Guests should use the compact private link format:
+Guests can RSVP from the plain invitation URL:
 
 ```text
-https://prince-khanna.github.io/birthdayinvitation/?i=SHORT_CODE
+https://prince-khanna.github.io/birthdayinvitation/
 ```
-
-The legacy `?invite=...` format remains supported so previously shared links continue to work.
 
 ## GitHub Pages
 

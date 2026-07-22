@@ -6,13 +6,6 @@ const allowedOrigins = new Set(
     (origin): origin is string => Boolean(origin),
   ),
 );
-const expectedTokenHashes = new Set(
-  [
-    Deno.env.get("INVITATION_TOKEN_SHA256"),
-    "f4678f6876d9f5568f23bc31795116bccfdaf922ab7c670bac13f13010bbe085",
-    "58fd208614a6e9ad4a44841dc233b977a461efb5bac2f781a0b581d6297199c5",
-  ].filter((hash): hash is string => Boolean(hash)),
-);
 const allowedPhotoTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 function corsHeaders(origin: string | null) {
@@ -24,25 +17,6 @@ function corsHeaders(origin: string | null) {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     Vary: "Origin",
   };
-}
-
-async function sha256(value: string) {
-  const digest = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(value),
-  );
-  return Array.from(new Uint8Array(digest), (byte) =>
-    byte.toString(16).padStart(2, "0")
-  ).join("");
-}
-
-function timingSafeEqual(left: string, right: string) {
-  if (left.length !== right.length) return false;
-  let mismatch = 0;
-  for (let index = 0; index < left.length; index += 1) {
-    mismatch |= left.charCodeAt(index) ^ right.charCodeAt(index);
-  }
-  return mismatch === 0;
 }
 
 function getSupabaseSecretKey() {
@@ -72,16 +46,7 @@ Deno.serve(async (request) => {
   try {
     const form = await request.formData();
     const guestName = String(form.get("guest_name") ?? "").trim();
-    const invitationToken = String(form.get("invitation_token") ?? "");
     const photo = form.get("photo");
-    const suppliedTokenHash = await sha256(invitationToken);
-
-    const validInvitation = Array.from(expectedTokenHashes).some((expectedHash) =>
-      timingSafeEqual(suppliedTokenHash, expectedHash)
-    );
-    if (!validInvitation) {
-      return Response.json({ error: "Invalid invitation" }, { status: 401, headers });
-    }
 
     if (!guestName || guestName.length > 120 || !(photo instanceof File)) {
       return Response.json({ error: "Name and photo are required" }, { status: 400, headers });

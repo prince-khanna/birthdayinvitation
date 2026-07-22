@@ -18,3 +18,4 @@ When implementing from a selected generated mock, treat that image as the source
 - Photo memories keep the original first photograph, followed chronologically by the supplied monthly milestone photographs for months 1–11. Use optimized, preloaded variants for fast mobile switching.
 - Use the supplied portrait of Anvika wearing pink sunglasses in her stroller as the main hero photograph, edited into the warm watercolor berry-storybook setting.
 - Maintain a Sites deployment alongside GitHub Pages and use its clean production URL as an alternate invitation share link.
+- Use a plain invitation URL with no invite code; guests can RSVP without a token.
