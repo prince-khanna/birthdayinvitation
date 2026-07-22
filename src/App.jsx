@@ -30,6 +30,7 @@ import memory11Photo from "./assets/anvika-memory-11.webp";
 import berryEnvelope from "./assets/berry-envelope.webp";
 import berryMap from "./assets/berry-map.jpg";
 import berrySprig from "./assets/berry-sprig.webp";
+import backgroundMusic from "./assets/riverbend-serenade.mp3";
 
 const photos = [
   { src: memory00Photo, alt: "Anvika’s first memory" },
@@ -46,75 +47,40 @@ const photos = [
   { src: memory11Photo, alt: "Anvika at eleven months old" },
 ];
 
-const melody = [
-  523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880, 698.46,
-  659.25, 783.99, 987.77, 783.99, 587.33, 698.46, 783.99, 523.25,
-];
+const MUSIC_VOLUME = 0.3;
+const MUSIC_SCROLL_VOLUME = 0.38;
 
-const MUSIC_VOLUME = 0.065;
-const MUSIC_SCROLL_VOLUME = 0.085;
-
-function useBerryMelody() {
+function useBackgroundMusic() {
   const audioRef = useRef(null);
-  const timerRef = useRef(null);
-  const noteRef = useRef(0);
   const mutedRef = useRef(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
 
   const stop = useCallback(() => {
-    window.clearInterval(timerRef.current);
-    timerRef.current = null;
+    audioRef.current?.pause();
     setPlaying(false);
   }, []);
 
   const play = useCallback(async () => {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-
     if (!audioRef.current) {
-      const context = new AudioContext();
-      const gain = context.createGain();
-      gain.gain.value = MUSIC_VOLUME;
-      gain.connect(context.destination);
-      audioRef.current = { context, gain };
+      const audio = new Audio(backgroundMusic);
+      audio.loop = true;
+      audio.preload = "auto";
+      audio.volume = MUSIC_VOLUME;
+      audio.setAttribute("playsinline", "");
+      audio.onended = () => setPlaying(false);
+      audio.onpause = () => setPlaying(false);
+      audio.onplay = () => setPlaying(true);
+      audioRef.current = audio;
     }
 
-    const { context, gain } = audioRef.current;
-    if (context.state !== "running") {
-      try {
-        await context.resume();
-      } catch {
-        setPlaying(false);
-        return;
-      }
-    }
-
-    if (context.state !== "running") {
+    const audio = audioRef.current;
+    audio.muted = mutedRef.current;
+    try {
+      await audio.play();
+    } catch {
       setPlaying(false);
-      return;
     }
-
-    const playNote = () => {
-      const oscillator = context.createOscillator();
-      const noteGain = context.createGain();
-      const now = context.currentTime;
-      oscillator.type = "sine";
-      oscillator.frequency.value = melody[noteRef.current % melody.length];
-      noteRef.current += 1;
-      noteGain.gain.setValueAtTime(0, now);
-      noteGain.gain.linearRampToValueAtTime(mutedRef.current ? 0 : 0.65, now + 0.03);
-      noteGain.gain.exponentialRampToValueAtTime(0.001, now + 0.72);
-      oscillator.connect(noteGain);
-      noteGain.connect(gain);
-      oscillator.start(now);
-      oscillator.stop(now + 0.74);
-    };
-
-    playNote();
-    window.clearInterval(timerRef.current);
-    timerRef.current = window.setInterval(playNote, 760);
-    setPlaying(true);
   }, []);
 
   useEffect(() => {
@@ -122,23 +88,29 @@ function useBerryMelody() {
       if (!audioRef.current) return;
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const progress = max > 0 ? window.scrollY / max : 0;
-      const volume = mutedRef.current
-        ? 0
-        : MUSIC_VOLUME + progress * (MUSIC_SCROLL_VOLUME - MUSIC_VOLUME);
-      audioRef.current.gain.gain.setTargetAtTime(volume, audioRef.current.context.currentTime, 0.25);
+      const volume = MUSIC_VOLUME + progress * (MUSIC_SCROLL_VOLUME - MUSIC_VOLUME);
+      audioRef.current.volume = volume;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => () => window.clearInterval(timerRef.current), []);
+  useEffect(() => () => {
+    if (!audioRef.current) return;
+    audioRef.current.onended = null;
+    audioRef.current.onpause = null;
+    audioRef.current.onplay = null;
+    audioRef.current.pause();
+    audioRef.current.src = "";
+    audioRef.current = null;
+  }, []);
 
   const toggleMute = () => {
     setMuted((current) => {
       const next = !current;
       mutedRef.current = next;
       if (audioRef.current) {
-        audioRef.current.gain.gain.setTargetAtTime(next ? 0 : MUSIC_VOLUME, audioRef.current.context.currentTime, 0.08);
+        audioRef.current.muted = next;
       }
       return next;
     });
@@ -173,7 +145,7 @@ export function App() {
   const streamRef = useRef(null);
   const fileRef = useRef(null);
   const preloadedPhotosRef = useRef([]);
-  const { playing, muted, play, stop, toggleMute } = useBerryMelody();
+  const { playing, muted, play, stop, toggleMute } = useBackgroundMusic();
 
   const openInvitation = () => {
     setOpened(true);
@@ -318,7 +290,7 @@ export function App() {
           {playing ? <Pause weight="fill" /> : <Play weight="fill" />}
         </button>
         <div>
-          <span>Anvika’s little berry song</span>
+          <span>Riverbend Serenade</span>
           <small>{playing ? "Playing as you scroll" : "Paused"}</small>
         </div>
         <button type="button" onClick={toggleMute} aria-label={muted ? "Unmute music" : "Mute music"}>

@@ -10,7 +10,7 @@ When implementing from a selected generated mock, treat that image as the source
 
 - Use only photographs from the Google Photos album named `anvika 1st`.
 - Combine the warm watercolor storybook feel of concept 1 with the playful berry picnic layout of concept 3; discard the lavender cloud concept.
-- Open the experience by tapping a berry-shaped invitation and start a gentle background song that continues while scrolling, with persistent pause and mute controls.
+- Open the experience by tapping a berry-shaped invitation and start the supplied `riverbend-serenade.mp3` on desktop and mobile; loop it while scrolling and keep persistent pause and mute controls.
 - Do not include guest-facing share or social controls.
 - RSVP collects only the guest name and a required camera selfie; do not ask for attendee count.
 - RSVP photos must be private and visible only to Anvika's family.
