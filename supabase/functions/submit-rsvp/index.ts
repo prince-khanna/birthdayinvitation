@@ -1,8 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2.110.7";
 
 const productionOrigin = "https://prince-khanna.github.io";
+const sitesOrigin = "https://anvika-berry-birthday.prince-khanna13.chatgpt.site";
 const allowedOrigins = new Set(
-  [productionOrigin, Deno.env.get("ALLOWED_ORIGIN")].filter(
+  [productionOrigin, sitesOrigin, Deno.env.get("ALLOWED_ORIGIN")].filter(
     (origin): origin is string => Boolean(origin),
   ),
 );
