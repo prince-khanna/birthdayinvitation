@@ -26,6 +26,7 @@ import memory07Photo from "./assets/anvika-memory-05.webp";
 import memory08Photo from "./assets/anvika-memory-06.webp";
 import memory09Photo from "./assets/anvika-memory-07.webp";
 import memory10Photo from "./assets/anvika-memory-08.webp";
+import memory11Photo from "./assets/anvika-memory-11.webp";
 import berryEnvelope from "./assets/berry-envelope.webp";
 import berryMap from "./assets/berry-map.jpg";
 import berrySprig from "./assets/berry-sprig.webp";
@@ -42,6 +43,7 @@ const photos = [
   { src: memory08Photo, alt: "Anvika at eight months old" },
   { src: memory09Photo, alt: "Anvika at nine months old" },
   { src: memory10Photo, alt: "Anvika at ten months old" },
+  { src: memory11Photo, alt: "Anvika at eleven months old" },
 ];
 
 const melody = [
