@@ -306,7 +306,6 @@ export function App() {
             <h1><em>Anvika’s</em> Berry First Birthday</h1>
             <p className="hero__date">Sunday · 9 August 2026</p>
             <p className="hero__intro">A whole year of tiny giggles, cuddles, and sweetness. Come celebrate our sweetest little berry.</p>
-            <a className="primary-button" href="#rsvp">RSVP for Anvika</a>
           </div>
           <figure className="hero__portrait">
             <img src={heroPhoto} alt="Anvika smiling in pink sunglasses" />

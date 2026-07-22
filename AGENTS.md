@@ -12,6 +12,7 @@ When implementing from a selected generated mock, treat that image as the source
 - Combine the warm watercolor storybook feel of concept 1 with the playful berry picnic layout of concept 3; discard the lavender cloud concept.
 - Open the experience by tapping a berry-shaped invitation and start the supplied `riverbend-serenade.mp3` on desktop and mobile; loop it while scrolling and keep persistent pause and mute controls.
 - Do not include guest-facing share or social controls.
+- Do not show an RSVP shortcut in the opening hero; let guests continue through the memories and event details before reaching the RSVP form.
 - RSVP collects only the guest name and a required camera selfie; do not ask for attendee count.
 - Keep RSVP photo actions distinct: “Open camera” requests the front camera, while “Choose a photo instead” opens the device photo/file picker without a capture hint.
 - RSVP photos must be private and visible only to Anvika's family.
