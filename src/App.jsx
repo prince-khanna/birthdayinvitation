@@ -391,7 +391,7 @@ export function App() {
                     </div>
                   )}
                   {cameraNotice && <p className="camera-notice" role="alert">{cameraNotice}</p>}
-                  <input id="rsvp-photo" ref={fileRef} className="visually-hidden" type="file" accept="image/*" capture="user" onChange={(event) => acceptPhoto(event.target.files?.[0])} />
+                  <input id="rsvp-photo" ref={fileRef} className="visually-hidden" type="file" accept="image/*" onChange={(event) => acceptPhoto(event.target.files?.[0])} />
                 </div>
               </div>
 

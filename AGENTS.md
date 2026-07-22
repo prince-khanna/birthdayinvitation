@@ -13,6 +13,7 @@ When implementing from a selected generated mock, treat that image as the source
 - Open the experience by tapping a berry-shaped invitation and start the supplied `riverbend-serenade.mp3` on desktop and mobile; loop it while scrolling and keep persistent pause and mute controls.
 - Do not include guest-facing share or social controls.
 - RSVP collects only the guest name and a required camera selfie; do not ask for attendee count.
+- Keep RSVP photo actions distinct: “Open camera” requests the front camera, while “Choose a photo instead” opens the device photo/file picker without a capture hint.
 - RSVP photos must be private and visible only to Anvika's family.
 - GitHub Pages is the static host; production RSVP delivery is expected to use a protected backend endpoint such as a Supabase Edge Function.
 - Photo memories keep the original first photograph, followed chronologically by the supplied monthly milestone photographs for months 1–11. Use optimized, preloaded variants for fast mobile switching.
