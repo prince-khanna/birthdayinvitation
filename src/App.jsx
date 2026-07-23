@@ -49,6 +49,50 @@ const photos = [
 
 const MUSIC_VOLUME = 0.3;
 const MUSIC_SCROLL_VOLUME = 0.38;
+const MAX_RSVP_PHOTO_DIMENSION = 1600;
+
+function loadPhoto(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("We couldn’t read this photo. Please choose a JPEG, PNG, or WebP image."));
+    };
+    image.src = url;
+  });
+}
+
+async function preparePhoto(file) {
+  if (!file || (file.type && !file.type.startsWith("image/"))) {
+    throw new Error("Please choose an image from your photo library.");
+  }
+
+  const image = await loadPhoto(file);
+  const scale = Math.min(
+    1,
+    MAX_RSVP_PHOTO_DIMENSION / Math.max(image.naturalWidth, image.naturalHeight),
+  );
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("We couldn’t prepare this photo. Please choose another one."));
+      },
+      "image/jpeg",
+      0.82,
+    );
+  });
+}
 
 function useBackgroundMusic() {
   const audioRef = useRef(null);
@@ -137,6 +181,7 @@ export function App() {
   const [photoBlob, setPhotoBlob] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
   const [cameraBusy, setCameraBusy] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
   const [cameraNotice, setCameraNotice] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -223,6 +268,25 @@ export function App() {
     closeCamera();
   };
 
+  const choosePhoto = async (file) => {
+    if (!file) return;
+    setPhotoBusy(true);
+    setError("");
+    setCameraNotice("");
+    try {
+      acceptPhoto(await preparePhoto(file));
+    } catch (photoError) {
+      setError(
+        photoError instanceof Error
+          ? photoError.message
+          : "We couldn’t prepare this photo. Please choose another one.",
+      );
+    } finally {
+      setPhotoBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
   const capturePhoto = () => {
     const video = videoRef.current;
     if (!video?.videoWidth) {
@@ -253,14 +317,25 @@ export function App() {
         payload.append("guest_name", name.trim());
         payload.append("photo", photoBlob, "berry-selfie.jpg");
         const response = await fetch(endpoint, { method: "POST", body: payload });
-        if (!response.ok) throw new Error("RSVP could not be sent");
+        const result = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(
+            result?.error === "Photo must be an image under 5 MB"
+              ? "This photo is still too large. Please choose another one."
+              : "We couldn’t send your RSVP just now. Please try again.",
+          );
+        }
       } else {
         localStorage.setItem("anvika-rsvp-preview", JSON.stringify({ guestName: name.trim(), createdAt: new Date().toISOString() }));
         await new Promise((resolve) => window.setTimeout(resolve, 650));
       }
       setSubmitted(true);
-    } catch {
-      setError("We couldn’t send your RSVP just now. Please try again.");
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "We couldn’t send your RSVP just now. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -386,11 +461,21 @@ export function App() {
                         <Camera weight="duotone" />
                         <span>{cameraBusy ? "Opening camera…" : "Open camera"}</span>
                       </button>
-                      <label className="camera-file-button" htmlFor="rsvp-photo">Choose a photo instead</label>
+                      <label className="camera-file-button" htmlFor="rsvp-photo">
+                        {photoBusy ? "Preparing photo…" : "Choose a photo instead"}
+                      </label>
                     </div>
                   )}
                   {cameraNotice && <p className="camera-notice" role="alert">{cameraNotice}</p>}
-                  <input id="rsvp-photo" ref={fileRef} className="visually-hidden" type="file" accept="image/*" onChange={(event) => acceptPhoto(event.target.files?.[0])} />
+                  <input
+                    id="rsvp-photo"
+                    ref={fileRef}
+                    className="visually-hidden"
+                    type="file"
+                    accept="image/*"
+                    disabled={photoBusy}
+                    onChange={(event) => void choosePhoto(event.target.files?.[0])}
+                  />
                 </div>
               </div>
 
@@ -398,7 +483,7 @@ export function App() {
                 <span className="step-number">3</span>
                 <div>
                   <p className="rsvp-step__title">Send your RSVP</p>
-                  <button className="primary-button" type="submit" disabled={submitting || !name.trim() || !photoBlob}>{submitting ? "Sending…" : "Send my RSVP"}</button>
+                  <button className="primary-button" type="submit" disabled={submitting || photoBusy || !name.trim() || !photoBlob}>{submitting ? "Sending…" : "Send my RSVP"}</button>
                 </div>
               </div>
               {error && <p className="form-error" role="alert">{error}</p>}
