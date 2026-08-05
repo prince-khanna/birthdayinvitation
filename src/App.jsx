@@ -2,15 +2,28 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  Baby,
+  Balloon,
+  Brain,
   Camera,
   CheckCircle,
   Clock,
+  Crown,
+  LockKey,
+  LockKeyOpen,
   MapPin,
+  MicrophoneStage,
   MusicNotes,
+  PawPrint,
   Pause,
+  PersonSimpleRun,
   Play,
+  Smiley,
+  Sparkle,
   SpeakerHigh,
   SpeakerSlash,
+  Tree,
+  Trophy,
   X,
 } from "@phosphor-icons/react";
 
@@ -31,6 +44,7 @@ import berryEnvelope from "./assets/berry-envelope.webp";
 import berryMap from "./assets/berry-map.jpg";
 import berrySprig from "./assets/berry-sprig.webp";
 import backgroundMusic from "./assets/riverbend-serenade.mp3";
+import { teamSlugs, teams } from "./gameData.js";
 
 const photos = [
   { src: memory00Photo, alt: "Anvika’s first memory" },
@@ -163,17 +177,27 @@ function useBackgroundMusic() {
   return { playing, muted, play, stop, toggleMute };
 }
 
-function SectionHeading({ eyebrow, children }) {
+function SectionHeading({ eyebrow, children, id }) {
   return (
     <header className="section-heading">
       <span>{eyebrow}</span>
-      <h2>{children}</h2>
+      <h2 id={id}>{children}</h2>
       <img src={berrySprig} alt="" aria-hidden="true" />
     </header>
   );
 }
 
-export function App() {
+function SiteTabs({ gameActive = false, invitationHref = "#invitation", gameHref = "./game/" }) {
+  return (
+    <nav className="site-tabs" aria-label="Invitation sections">
+      <a className={!gameActive ? "active" : ""} href={invitationHref}>Invitation</a>
+      <a className={gameActive ? "active" : ""} href={gameHref}>Birthday game</a>
+    </nav>
+  );
+}
+
+function Invitation() {
+  const gameAvailability = useGameAvailability();
   const [opened, setOpened] = useState(false);
   const [slide, setSlide] = useState(0);
   const [name, setName] = useState("");
@@ -349,6 +373,7 @@ export function App() {
         if (event.target instanceof HTMLImageElement) event.preventDefault();
       }}
     >
+      {gameAvailability.status === "ready" && gameAvailability.enabled && <SiteTabs />}
       <section className="berry-door" aria-label="Open Anvika’s birthday invitation">
         <div className="berry-door__content">
           <p className="eyebrow">A tiny invitation has ripened for you</p>
@@ -504,4 +529,421 @@ export function App() {
       )}
     </main>
   );
+}
+
+const teamIcons = {
+  trophy: Trophy,
+  balloon: Balloon,
+  paw: PawPrint,
+  camera: Camera,
+  microphone: MicrophoneStage,
+  baby: Baby,
+  smiley: Smiley,
+  brain: Brain,
+  dance: PersonSimpleRun,
+  crown: Crown,
+};
+
+const GAME_STATUS_ENDPOINT =
+  import.meta.env.VITE_GAME_STATUS_ENDPOINT ||
+  "https://zvabtewgyvmgsbcjcjio.supabase.co/functions/v1/game-team-status";
+
+async function readTeamApproval(teamSlug, revealRiddle = false) {
+  const url = new URL(GAME_STATUS_ENDPOINT);
+  url.searchParams.set("team", teamSlug);
+  if (revealRiddle) url.searchParams.set("reveal", "1");
+
+  const response = await fetch(url, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok || !result) {
+    throw new Error(result?.error || "Unable to check team approval");
+  }
+  return result;
+}
+
+async function readGameAvailability() {
+  const url = new URL(GAME_STATUS_ENDPOINT);
+  url.searchParams.set("scope", "game");
+
+  const response = await fetch(url, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok || typeof result?.enabled !== "boolean") {
+    throw new Error(result?.error || "Unable to check game availability");
+  }
+  return result.enabled;
+}
+
+function useGameAvailability() {
+  const [availability, setAvailability] = useState({ status: "checking", enabled: false });
+
+  useEffect(() => {
+    let active = true;
+    readGameAvailability()
+      .then((enabled) => {
+        if (active) setAvailability({ status: "ready", enabled });
+      })
+      .catch(() => {
+        if (active) setAvailability({ status: "error", enabled: false });
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return availability;
+}
+
+async function submitRiddleAnswer(teamSlug, answer) {
+  const response = await fetch(GAME_STATUS_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ team: teamSlug, answer }),
+  });
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok || !result) {
+    throw new Error(result?.error || "Unable to check the answer");
+  }
+  return result;
+}
+
+function resolveGameRoute() {
+  const segments = window.location.pathname.split("/").filter(Boolean);
+  if (segments.at(-1) === "game") return { kind: "index" };
+
+  const teamIndex = segments.findIndex((segment) => teamSlugs.includes(segment));
+  if (teamIndex === -1) return null;
+
+  const team = teams.find(({ slug }) => slug === segments[teamIndex]);
+  return {
+    kind: segments[teamIndex + 1] === "riddle" ? "riddle" : "challenge",
+    team,
+  };
+}
+
+function GameMusicPlayer() {
+  const { playing, muted, play, stop, toggleMute } = useBackgroundMusic();
+  return (
+    <div className="music-player game-music-player" aria-label="Background music controls">
+      <button type="button" onClick={playing ? stop : play} aria-label={playing ? "Pause music" : "Play music"}>
+        {playing ? <Pause weight="fill" /> : <Play weight="fill" />}
+      </button>
+      <div>
+        <span>Riverbend Serenade</span>
+        <small>{playing ? "Playing during the mission" : "Tap play for party music"}</small>
+      </div>
+      <button type="button" onClick={toggleMute} aria-label={muted ? "Unmute music" : "Mute music"}>
+        {muted ? <SpeakerSlash /> : <SpeakerHigh />}
+      </button>
+    </div>
+  );
+}
+
+function GameShell({ route, children }) {
+  const gameAvailability = useGameAvailability();
+  const showTabs = gameAvailability.status === "ready" && gameAvailability.enabled;
+  const invitationHref = route.kind === "riddle" ? "../../" : "../";
+  const gameHref = route.kind === "riddle"
+    ? "../../game/"
+    : route.kind === "challenge"
+      ? "../game/"
+      : "./";
+
+  return (
+    <main className={showTabs ? "site is-open game-site has-site-tabs" : "site is-open game-site"}>
+      {showTabs && <SiteTabs gameActive invitationHref={invitationHref} gameHref={gameHref} />}
+      <div className="game-paper">
+        {children}
+        <footer className="game-footer">
+          <MusicNotes weight="duotone" />
+          <strong>Anvika’s Great Birthday Treasure Hunt</strong>
+          <span>Complete your mission. Keep your answer secret.</span>
+        </footer>
+      </div>
+      <GameMusicPlayer />
+    </main>
+  );
+}
+
+function TeamMark({ team }) {
+  const Icon = teamIcons[team.icon];
+  return (
+    <div className="team-mark" aria-hidden="true">
+      <span>{team.number}</span>
+      <Icon weight="duotone" />
+    </div>
+  );
+}
+
+function GameIndex() {
+  return (
+    <GameShell route={{ kind: "index" }}>
+      <section className="game-hero section-shell">
+        <div className="game-hero__copy">
+          <p className="eyebrow">Anvika’s 1st birthday</p>
+          <h1>Great Birthday<br />Treasure Hunt</h1>
+          <p>Find your family team, open your secret mission, and do not reveal your answer to anyone else.</p>
+        </div>
+        <div className="game-hero__seal" aria-hidden="true">
+          <Sparkle weight="duotone" />
+          <strong>10</strong>
+          <span>family missions</span>
+        </div>
+      </section>
+
+      <section className="team-picker section-shell" aria-labelledby="choose-team-title">
+        <SectionHeading eyebrow="Choose carefully" id="choose-team-title">Find your family team</SectionHeading>
+        <p className="team-picker__intro">Only open the team assigned to your family.</p>
+        <div className="team-grid">
+          {teams.map((team) => {
+            const Icon = teamIcons[team.icon];
+            return (
+              <a className="team-card" href={`../${team.slug}/`} key={team.slug}>
+                <span className="team-card__number">Team {team.number}</span>
+                <Icon weight="duotone" aria-hidden="true" />
+                <div>
+                  <h2>{team.title}</h2>
+                  <p>{team.teaser}</p>
+                </div>
+                <ArrowRight className="team-card__arrow" aria-hidden="true" />
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    </GameShell>
+  );
+}
+
+function ChallengePage({ team }) {
+  const { challenge } = team;
+  const [approvalState, setApprovalState] = useState("idle");
+  const [approvalMessage, setApprovalMessage] = useState("");
+
+  const openApprovedRiddle = async () => {
+    setApprovalState("checking");
+    setApprovalMessage("");
+    try {
+      const result = await readTeamApproval(team.slug);
+      if (!result.approved) {
+        setApprovalState("waiting");
+        setApprovalMessage(`Team ${team.number} is not approved yet. Ask Anvika's parents, then try again.`);
+        return;
+      }
+      setApprovalState("approved");
+      window.location.assign("./riddle/");
+    } catch {
+      setApprovalState("error");
+      setApprovalMessage("We could not check approval just now. Please try again.");
+    }
+  };
+
+  return (
+    <GameShell route={{ kind: "challenge" }}>
+      <section className="mission-page section-shell">
+        <a className="game-back-link" href="../game/"><ArrowLeft /> All teams</a>
+        <article className="mission-card">
+          <TeamMark team={team} />
+          <p className="mission-card__eyebrow">Team {team.number} · Secret family mission</p>
+          <h1>{team.title}</h1>
+          <p className="mission-card__intro">{challenge.intro}</p>
+
+          {challenge.photo && (
+            <figure className="mission-reference">
+              <img src={heroPhoto} alt="Anvika wearing pink sunglasses in her stroller" />
+              <figcaption>Your pose to recreate</figcaption>
+            </figure>
+          )}
+
+          <div className="mission-blocks">
+            {challenge.blocks.map((block) => (
+              <section key={block.title}>
+                <h2>{block.title}</h2>
+                <ul>
+                  {block.lines.map((line) => <li key={line}>{line}</li>)}
+                </ul>
+              </section>
+            ))}
+          </div>
+
+          <div className="mission-finish">
+            <CheckCircle weight="duotone" aria-hidden="true" />
+            <p>{challenge.finish}</p>
+          </div>
+
+          <button
+            className="primary-button mission-riddle-link"
+            type="button"
+            onClick={openApprovedRiddle}
+            disabled={approvalState === "checking" || approvalState === "approved"}
+          >
+            <LockKeyOpen weight="bold" />
+            {approvalState === "checking" ? "Checking parent approval..." : "Mission complete - check approval"}
+          </button>
+          {approvalMessage && (
+            <p className={`approval-message approval-message--${approvalState}`} role="status">
+              {approvalMessage}
+            </p>
+          )}
+        </article>
+      </section>
+    </GameShell>
+  );
+}
+
+function RiddlePage({ team }) {
+  const [riddleState, setRiddleState] = useState("checking");
+  const [riddle, setRiddle] = useState(null);
+  const [guess, setGuess] = useState("");
+  const [solved, setSolved] = useState(false);
+  const [guessError, setGuessError] = useState("");
+  const [answerBusy, setAnswerBusy] = useState(false);
+
+  const loadRiddle = useCallback(async () => {
+    setRiddleState("checking");
+    setGuessError("");
+    try {
+      const result = await readTeamApproval(team.slug, true);
+      if (!result.approved) {
+        setRiddle(null);
+        setRiddleState("locked");
+        return;
+      }
+      if (
+        !result.riddle ||
+        !Array.isArray(result.riddle.clues) ||
+        !result.riddle.question
+      ) {
+        throw new Error("Riddle is unavailable");
+      }
+      setRiddle(result.riddle);
+      setRiddleState("ready");
+    } catch {
+      setRiddle(null);
+      setRiddleState("error");
+    }
+  }, [team.slug]);
+
+  useEffect(() => {
+    void loadRiddle();
+  }, [loadRiddle]);
+
+  const checkAnswer = async (event) => {
+    event.preventDefault();
+    setAnswerBusy(true);
+    setGuessError("");
+    try {
+      const result = await submitRiddleAnswer(team.slug, guess.trim());
+      if (!result.approved) {
+        setRiddle(null);
+        setRiddleState("locked");
+        return;
+      }
+      if (result.correct) {
+        setSolved(true);
+        window.setTimeout(() => document.querySelector("#final-instruction")?.scrollIntoView({ behavior: "smooth" }), 80);
+        return;
+      }
+      setGuessError("Not quite. Read every clue once more and try again.");
+    } catch {
+      setGuessError("We could not check your answer just now. Please try again.");
+    } finally {
+      setAnswerBusy(false);
+    }
+  };
+
+  if (riddleState !== "ready" || !riddle) {
+    const checking = riddleState === "checking";
+    return (
+      <GameShell route={{ kind: "riddle" }}>
+        <section className="riddle-page section-shell">
+          <a className="game-back-link" href="../"><ArrowLeft /> Back to mission</a>
+          <article className="riddle-card riddle-card--locked">
+            <TeamMark team={team} />
+            <LockKey weight="duotone" aria-hidden="true" />
+            <p className="mission-card__eyebrow">Team {team.number} · Mystery card</p>
+            <h1>{checking ? "Checking approval..." : "Riddle still locked"}</h1>
+            <p className="riddle-card__intro">
+              {checking
+                ? "Asking Supabase whether Anvika's parents approved your mission."
+                : riddleState === "error"
+                  ? "We could not reach the approval check. Your riddle remains safely locked."
+                  : `Anvika's parents have not approved Team ${team.number} yet.`}
+            </p>
+            {!checking && (
+              <button className="primary-button approval-retry" type="button" onClick={loadRiddle}>
+                Check approval again
+              </button>
+            )}
+          </article>
+        </section>
+      </GameShell>
+    );
+  }
+
+  return (
+    <GameShell route={{ kind: "riddle" }}>
+      <section className="riddle-page section-shell">
+        <a className="game-back-link" href="../"><ArrowLeft /> Back to mission</a>
+        <article className="riddle-card">
+          <TeamMark team={team} />
+          <p className="mission-card__eyebrow">Team {team.number} · Mystery card</p>
+          <h1>One final riddle</h1>
+          {riddle.intro && <p className="riddle-card__intro">{riddle.intro}</p>}
+          <div className="riddle-clues">
+            {riddle.clues.map((clue) => <p key={clue}>{clue}</p>)}
+          </div>
+          <p className="riddle-question">{riddle.question}</p>
+
+          {!solved && (
+            <form className="riddle-answer" onSubmit={checkAnswer}>
+              <label htmlFor="riddle-guess">Your secret answer</label>
+              <div>
+                <input
+                  id="riddle-guess"
+                  value={guess}
+                  onChange={(event) => setGuess(event.target.value)}
+                  placeholder="Type your answer"
+                  autoComplete="off"
+                  required
+                />
+                <button className="primary-button" type="submit" disabled={answerBusy}>
+                  {answerBusy ? "Checking..." : "Check answer"}
+                </button>
+              </div>
+              {guessError && <p className="riddle-error" role="alert">{guessError}</p>}
+            </form>
+          )}
+
+          {solved && (
+            <section className="final-instruction" id="final-instruction" aria-live="polite">
+              <Tree weight="duotone" aria-hidden="true" />
+              <p className="eyebrow">Correct · Final instruction</p>
+              <h2>Find the tree wearing Anvika’s birthday ribbon.</h2>
+              <p>Do not open the treasure. Wait there for the other detectives - and do not tell them the answer.</p>
+            </section>
+          )}
+        </article>
+      </section>
+    </GameShell>
+  );
+}
+
+function GameExperience({ route }) {
+  if (route.kind === "index") return <GameIndex />;
+  if (route.kind === "riddle") return <RiddlePage team={route.team} />;
+  return <ChallengePage team={route.team} />;
+}
+
+export function App() {
+  const gameRoute = resolveGameRoute();
+  return gameRoute ? <GameExperience route={gameRoute} /> : <Invitation />;
 }

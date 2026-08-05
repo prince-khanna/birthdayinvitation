@@ -21,3 +21,7 @@ When implementing from a selected generated mock, treat that image as the source
 - Use the supplied portrait of Anvika wearing pink sunglasses in her stroller as the main hero photograph, edited into the warm watercolor berry-storybook setting.
 - Maintain a Sites deployment alongside GitHub Pages and use its clean production URL as an alternate invitation share link.
 - Use a plain invitation URL with no invite code; guests can RSVP without a token.
+- Add the birthday treasure hunt as a separate Game tab while preserving the normal invitation journey. `/game` lists all ten teams, each team challenge has a readable top-level route such as `/baby-olympics`, and its mystery card lives at `/baby-olympics/riddle`.
+- Do not display a team's riddle on the team list or challenge page. Reveal the shared ribbon-tree instruction only from the team's riddle page after the team says it has solved the riddle.
+- A mission must be approved per team in Supabase before its riddle can open. Keep riddle text and answer validation server-side in the private `game_team_approvals` table and `game-team-status` Edge Function; direct `/teamname/riddle` visits must enforce the same approval gate.
+- Use the `birthday_game_settings` Supabase master switch only to control whether the Invitation/Game navigation is visible. When disabled, hide that navigation everywhere but keep `/game` and all direct team URLs working; team-level riddle approval remains a separate gate.
