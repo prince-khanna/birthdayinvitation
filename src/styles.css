@@ -151,7 +151,7 @@ footer strong { color: var(--berry-dark); font-family: "Fraunces", serif; font-s
 .shutter svg { width: 30px; height: 30px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-.game-site { min-height: 100svh; background-color: #f5dccf; background-image: url("./assets/botanical-border.jpg"); background-position: top center; background-size: 1180px auto; background-attachment: fixed; }
+.game-site { min-height: 100svh; background: #f5dccf; }
 .game-site.has-site-tabs { padding-top: 72px; }
 .game-paper { width: min(100%, 1180px); min-height: 100svh; margin: 0 auto; overflow: hidden; background: var(--paper); box-shadow: 0 0 80px rgba(94, 48, 39, .18); }
 .has-site-tabs .game-paper { min-height: calc(100svh - 72px); }

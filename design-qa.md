@@ -66,6 +66,8 @@ The existing invitation and the Game index were opened side-by-side in `invitati
 
 ### Interaction and regression checks
 
+- Teams 3, 5, 6, and 8 no longer expose animal choices, singing styles, charade words, or tray contents on their guest-facing pages. Team 10 renders the family-led Slow-Motion Birthday Party and does not ask Anvika to give instructions.
+- The game shell uses the invitation's plain peach outer gutters. The botanical border no longer repeats behind the 1180 px paper to create mismatched floral side strips at desktop widths.
 - With `birthday_game_settings.enabled` set to `false`, the Invitation/Game navigation is absent on the invitation, Game index, and direct team page; `/game/` and `/baby-olympics/` still render normally.
 - Browser-rendered checks covered `/game/`, `/baby-olympics/`, `/baby-olympics/riddle/`, wrong-answer feedback, correct-answer reveal, and `/copy-anvika/` at mobile width.
 - Supabase approval checks covered an unapproved mission button, a directly opened locked riddle URL, a temporarily approved Team 1 riddle, server-side correct-answer validation, and the final instruction. Team 1 was reset afterward and the database finished with zero approved teams.

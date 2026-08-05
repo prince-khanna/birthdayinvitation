@@ -36,7 +36,7 @@ export const teams = [
     title: "Animal Madness",
     teaser: "Welcome to Anvika's very silly zoo.",
     challenge: {
-      intro: "The youngest participating child secretly chooses one animal: elephant, monkey, penguin, or rabbit.",
+      intro: "The youngest participating child collects one secret animal slip from Anvika's parents and keeps it hidden.",
       blocks: [
         { title: "Round one", lines: ["One adult acts like the chosen animal.", "No words and no saying the animal's name.", "Everyone else must guess."] },
         { title: "The grand finale", lines: ["Once it is guessed, every adult becomes that animal for 10 seconds."] },
@@ -67,7 +67,7 @@ export const teams = [
     title: "Terrible Birthday Singers",
     teaser: "Give Happy Birthday a truly unforgettable remix.",
     challenge: {
-      intro: "Pick one mystery singing style: opera, rock, robot, very sad, or whisper.",
+      intro: "Collect one folded mystery singing-style slip from Anvika's parents. Keep it closed until your whole team is ready.",
       blocks: [
         { title: "Your performance", lines: ["Sing 'Happy Birthday to Anvika' in that style.", "The performance must last at least 20 seconds.", "Everyone must participate."] },
       ],
@@ -81,9 +81,9 @@ export const teams = [
     title: "Baby Charades",
     teaser: "Act out three secret words - as a baby.",
     challenge: {
-      intro: "Choose one adult actor. They must act out bottle, sleep, and diaper.",
+      intro: "Collect three secret baby-word slips from Anvika's parents. Only the chosen adult actor may look at them.",
       blocks: [
-        { title: "The rules", lines: ["No talking.", "No pointing at a real baby.", "No objects.", "Everything must be performed as a baby."] },
+        { title: "The rules", lines: ["The rest of the family must guess each word.", "No talking.", "No pointing at a real baby.", "No objects.", "Everything must be performed as a baby."] },
       ],
       finish: "Your family must guess all three words before you report back.",
     },
@@ -110,9 +110,8 @@ export const teams = [
     title: "The Memory Challenge",
     teaser: "Can your family outsmart Anvika's baby brain test?",
     challenge: {
-      intro: "You have 20 seconds to memorise the six objects on Anvika's tray.",
+      intro: "Anvika's parents will show you a tray with six objects. You have 20 seconds to memorise them.",
       blocks: [
-        { title: "On the tray", lines: ["Bottle, spoon, toy, balloon, sock, and apple."] },
         { title: "Then turn around", lines: ["Anvika's parents remove one item.", "Turn back and identify what is missing in 10 seconds.", "If you are wrong, you get one more attempt - but only 10 seconds to memorise."] },
       ],
       finish: "Found the missing object? Report to Anvika's parents.",
@@ -137,15 +136,15 @@ export const teams = [
     number: 10,
     slug: "anvika-says",
     icon: "crown",
-    title: "Anvika Says",
-    teaser: "A birthday twist on the classic listening game.",
+    title: "The Slow-Motion Birthday Party",
+    teaser: "Throw the slowest, silliest celebration ever.",
     challenge: {
-      intro: "Choose one person to be Baby Anvika. Baby Anvika gives the commands.",
+      intro: "Your family must perform a 30-second birthday party entirely in slow motion.",
       blocks: [
-        { title: "Try these", lines: ["Anvika says touch your nose!", "Anvika says jump!", "Anvika says make a baby face!", "Clap!"] },
-        { title: "Listen carefully", lines: ["Anyone who claps is out because Anvika did not say.", "Continue until one person remains."] },
+        { title: "Your scene", lines: ["One person carries an imaginary birthday cake.", "Everyone else celebrates, dances, and reacts in exaggerated slow motion."] },
+        { title: "The rules", lines: ["No normal-speed movements.", "Everyone must take part.", "Finish together in a frozen baby-face pose."] },
       ],
-      finish: "The winner becomes Anvika's Official Assistant. Report to her parents.",
+      finish: "Performance complete? Report to Anvika's parents for approval.",
     },
   },
 ];
